@@ -38,6 +38,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm ${{ matrix.script }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         with:
