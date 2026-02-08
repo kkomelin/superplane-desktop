@@ -4,9 +4,11 @@ const path = require("path");
 const http = require("http");
 
 const IMAGE = "ghcr.io/superplanehq/superplane-demo:stable";
+const CONTAINER_NAME = "superplane-desktop";
 const PORT = 3000;
 const POLL_INTERVAL = 1500;
 const POLL_TIMEOUT = 120_000;
+const ALLOWED_ORIGIN = `http://127.0.0.1:${PORT}`;
 
 let loaderWindow = null;
 let containerProcess = null;
@@ -63,6 +65,29 @@ function dockerAvailable() {
   }
 }
 
+function imageExistsLocally() {
+  try {
+    execSync(`docker image inspect ${IMAGE}`, {
+      stdio: "ignore",
+      timeout: 10_000,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function removeOrphanContainer() {
+  try {
+    execSync(`docker rm -f ${CONTAINER_NAME}`, {
+      stdio: "ignore",
+      timeout: 10_000,
+    });
+  } catch {
+    // no orphan — that's fine
+  }
+}
+
 function pullImage() {
   return new Promise((resolve, reject) => {
     sendStatus("Pulling Docker image…");
@@ -82,16 +107,26 @@ function pullImage() {
   });
 }
 
+function pullImageInBackground() {
+  sendLog("Checking for image updates in the background…");
+  const proc = spawn("docker", ["pull", IMAGE], { stdio: "ignore" });
+  proc.on("close", (code) => {
+    if (code === 0) sendLog("Image updated — changes apply on next launch.");
+  });
+}
+
 function runContainer() {
   return new Promise((resolve, reject) => {
     sendStatus("Starting container…");
     sendLog(
-      `$ docker run --rm -p ${PORT}:${PORT} -v spdata:/app/data ghcr.io/superplanehq/superplane-demo:stable`,
+      `$ docker run --rm --name ${CONTAINER_NAME} -p ${PORT}:${PORT} -v spdata:/app/data ${IMAGE}`,
     );
 
     containerProcess = spawn("docker", [
       "run",
       "--rm",
+      "--name",
+      CONTAINER_NAME,
       "-p",
       `${PORT}:${PORT}`,
       "-v",
@@ -151,7 +186,7 @@ function waitForReady() {
         return reject(new Error("Timed out waiting for SuperPlane to start"));
       }
 
-      const req = http.get(`http://127.0.0.1:${PORT}/`, (res) => {
+      const req = http.get(`${ALLOWED_ORIGIN}/`, (res) => {
         if (res.statusCode >= 200 && res.statusCode < 400) {
           sendLog(`Got HTTP ${res.statusCode} — app is ready.`);
           resolve();
@@ -188,7 +223,20 @@ function openApp() {
     },
   });
 
-  mainWindow.loadURL(`http://127.0.0.1:${PORT}`);
+  // Restrict navigation to the local app origin
+  mainWindow.webContents.on("will-navigate", (event, url) => {
+    if (!url.startsWith(ALLOWED_ORIGIN)) {
+      event.preventDefault();
+    }
+  });
+
+  // Block popups / window.open to external URLs
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith(ALLOWED_ORIGIN)) return { action: "allow" };
+    return { action: "deny" };
+  });
+
+  mainWindow.loadURL(ALLOWED_ORIGIN);
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
     loaderWindow?.close();
@@ -203,8 +251,15 @@ function openApp() {
 
 function stopContainer() {
   if (containerProcess) {
-    containerProcess.kill("SIGTERM");
     containerProcess = null;
+    try {
+      execSync(`docker stop ${CONTAINER_NAME}`, {
+        stdio: "ignore",
+        timeout: 10_000,
+      });
+    } catch {
+      // container may already be gone
+    }
   }
 }
 
@@ -217,7 +272,15 @@ async function startSuperPlane() {
       return;
     }
 
-    await pullImage();
+    removeOrphanContainer();
+
+    if (imageExistsLocally()) {
+      sendLog("Image found locally — starting immediately.");
+      pullImageInBackground();
+    } else {
+      await pullImage();
+    }
+
     await runContainer();
     await waitForReady();
     openApp();
@@ -241,4 +304,9 @@ app.on("before-quit", stopContainer);
 ipcMain.on("retry", () => {
   stopContainer();
   startSuperPlane();
+});
+
+ipcMain.on("quit-app", () => {
+  stopContainer();
+  app.quit();
 });

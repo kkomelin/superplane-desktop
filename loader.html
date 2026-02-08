@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:">
 <title>SuperPlane</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap');
@@ -202,6 +204,28 @@
   }
   #retry-btn:active { transform: scale(.97); }
 
+  /* ── Close button ── */
+  .close-btn {
+    -webkit-app-region: no-drag;
+    position: fixed;
+    top: 14px; right: 16px;
+    z-index: 10;
+    width: 28px; height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 18px;
+    line-height: 28px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all .15s;
+  }
+  .close-btn:hover {
+    background: rgba(255,255,255,.08);
+    color: var(--text-primary);
+  }
+
   /* ── Util ── */
   @keyframes fadeIn {
     from { opacity: 0; }
@@ -214,6 +238,7 @@
 </style>
 </head>
 <body>
+  <button class="close-btn" id="close-btn" title="Quit">&times;</button>
   <div class="bg"></div>
   <div class="wrapper">
     <div class="brand">
@@ -252,6 +277,9 @@
   const spinnerEl = document.getElementById('spinner');
   const retryWrap = document.getElementById('retry-wrap');
   const retryBtn  = document.getElementById('retry-btn');
+  const closeBtn  = document.getElementById('close-btn');
+
+  let cleanupStatus, cleanupLog, cleanupError;
 
   function appendLog(text) {
     const line = document.createElement('div');
@@ -275,18 +303,35 @@
     retryWrap.classList.add('visible');
   }
 
-  if (window.electronAPI) {
-    window.electronAPI.onStatusUpdate((text) => setStatus(text));
-    window.electronAPI.onLogLine((text) => appendLog(text));
-    window.electronAPI.onError((text) => setError(text));
+  function bindListeners() {
+    if (!window.electronAPI) return;
+    cleanupStatus = window.electronAPI.onStatusUpdate((text) => setStatus(text));
+    cleanupLog    = window.electronAPI.onLogLine((text) => appendLog(text));
+    cleanupError  = window.electronAPI.onError((text) => setError(text));
   }
 
+  function unbindListeners() {
+    if (cleanupStatus) cleanupStatus();
+    if (cleanupLog)    cleanupLog();
+    if (cleanupError)  cleanupError();
+  }
+
+  bindListeners();
+
   retryBtn.addEventListener('click', () => {
+    unbindListeners();
     if (window.electronAPI) {
       window.electronAPI.retry();
     }
     setStatus('retrying…');
     retryWrap.classList.remove('visible');
+    bindListeners();
+  });
+
+  closeBtn.addEventListener('click', () => {
+    if (window.electronAPI) {
+      window.electronAPI.quit();
+    }
   });
 </script>
 </body>
