@@ -1,6 +1,15 @@
 # SuperPlane Desktop
 
+[![Release](https://img.shields.io/github/v/release/kkomelin/superplane-desktop)](https://github.com/kkomelin/superplane-desktop/releases)
+[![Build](https://github.com/kkomelin/superplane-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/kkomelin/superplane-desktop/actions/workflows/build.yml)
+
 Desktop Electron wrapper that runs [SuperPlane](https://superplane.com/) locally via Docker.
+
+## How it works
+
+A loader screen shows live Docker output while the image is pulled and the container starts. 
+Once the app responds on `http://127.0.0.1:3000`, the loader transitions to the main app window. 
+Closing the window stops the container.
 
 ## Prerequisites
 
@@ -39,6 +48,13 @@ pnpm build:win      # nsis installer
 
 Output goes to the `dist/` folder.
 
-## How it works
+## Release
 
-A loader screen shows live Docker output while the image is pulled and the container starts. Once the app responds on `http://127.0.0.1:3000`, the loader transitions to the main app window. Closing the window stops the container.
+Push a version tag to build all platforms and create a GitHub Release:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+You can also trigger a build manually from the Actions tab without creating a release.
