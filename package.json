@@ -1,0 +1,57 @@
+{
+  "name": "superplane-desktop",
+  "version": "0.1.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:linux": "electron-builder --linux",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win"
+  },
+  "homepage": "https://github.com/kkomelin/superplane-desktop",
+  "bugs": {
+    "url": "https://github.com/kkomelin/superplane-desktop/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kkomelin/superplane-desktop.git"
+  },
+  "keywords": ["superplane", "electron", "desktop", "docker", "workflows"],
+  "author": "Konstantin Komelin <konstantin.komelin@gmail.com>",
+  "license": "Apache-2.0",
+  "description": "SuperPlane Desktop App",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron"
+    ]
+  },
+  "build": {
+    "appId": "com.superplane.desktop",
+    "productName": "SuperPlane",
+    "files": [
+      "main.js",
+      "preload.js",
+      "loader.html"
+    ],
+    "icon": "build/icon.png",
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Development",
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "category": "public.app-category.developer-tools",
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "build/icon.ico"
+    }
+  },
+  "devDependencies": {
+    "electron": "^40.2.1",
+    "electron-builder": "^26.7.0"
+  }
+}
