@@ -1,6 +1,6 @@
 # SuperPlane Desktop
 
-Electron wrapper that runs [SuperPlane](https://superplane.com/) locally via Docker.
+Desktop Electron wrapper that runs [SuperPlane](https://superplane.com/) locally via Docker.
 
 ## Prerequisites
 
