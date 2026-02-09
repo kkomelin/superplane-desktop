@@ -84,13 +84,13 @@ function removeOrphanContainer() {
       timeout: 10_000,
     });
   } catch {
-    // no orphan — that's fine
+    // no orphan - that's fine
   }
 }
 
 function pullImage() {
   return new Promise((resolve, reject) => {
-    sendStatus("Pulling Docker image…");
+    sendStatus("Pulling Docker image...");
     sendLog(`$ docker pull ${IMAGE}`);
 
     const proc = spawn("docker", ["pull", IMAGE]);
@@ -108,16 +108,16 @@ function pullImage() {
 }
 
 function pullImageInBackground() {
-  sendLog("Checking for image updates in the background…");
+  sendLog("Checking for image updates in the background...");
   const proc = spawn("docker", ["pull", IMAGE], { stdio: "ignore" });
   proc.on("close", (code) => {
-    if (code === 0) sendLog("Image updated — changes apply on next launch.");
+    if (code === 0) sendLog("Image updated - changes apply on next launch.");
   });
 }
 
 function runContainer() {
   return new Promise((resolve, reject) => {
-    sendStatus("Starting container…");
+    sendStatus("Starting container...");
     sendLog(
       `$ docker run --rm --name ${CONTAINER_NAME} -p ${PORT}:${PORT} -v spdata:/app/data ${IMAGE}`,
     );
@@ -177,7 +177,7 @@ function runContainer() {
 }
 
 function waitForReady() {
-  sendStatus("Waiting for SuperPlane to be ready…");
+  sendStatus("Waiting for SuperPlane to be ready...");
   const start = Date.now();
 
   return new Promise((resolve, reject) => {
@@ -188,7 +188,7 @@ function waitForReady() {
 
       const req = http.get(`${ALLOWED_ORIGIN}/health`, (res) => {
         if (res.statusCode >= 200 && res.statusCode < 400) {
-          sendLog(`Got HTTP ${res.statusCode} — app is ready.`);
+          sendLog(`Got HTTP ${res.statusCode} - app is ready.`);
           resolve();
         } else {
           setTimeout(check, POLL_INTERVAL);
@@ -208,7 +208,7 @@ function waitForReady() {
 }
 
 function openApp() {
-  sendStatus("Launching SuperPlane…");
+  sendStatus("Launching SuperPlane...");
 
   const mainWindow = new BrowserWindow({
     width: 1280,
@@ -268,14 +268,14 @@ function stopContainer() {
 async function startSuperPlane() {
   try {
     if (!dockerAvailable()) {
-      sendError("Docker is not running. Please start Docker and retry.");
+      sendError("Docker is not found. Please install Docker and retry.");
       return;
     }
 
     removeOrphanContainer();
 
     if (imageExistsLocally()) {
-      sendLog("Image found locally — starting immediately.");
+      sendLog("Image found locally - starting immediately.");
       pullImageInBackground();
     } else {
       await pullImage();
