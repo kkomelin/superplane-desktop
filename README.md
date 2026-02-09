@@ -8,7 +8,7 @@ Desktop Electron wrapper that runs [SuperPlane](https://superplane.com/) locally
 ## How it works
 
 A loader screen shows live Docker output while the image is pulled and the container starts. 
-Once the app responds on `http://127.0.0.1:3000`, the loader transitions to the main app window. 
+Once the app responds on `http://127.0.0.1:3000/health`, the loader transitions to the main app window. 
 Closing the window stops the container.
 
 ## Prerequisites
