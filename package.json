@@ -29,10 +29,12 @@
   "build": {
     "appId": "com.superplane.desktop",
     "productName": "SuperPlane",
+    "copyright": "Licensed under Apache-2.0.",
     "files": [
       "main.js",
       "preload.js",
-      "loader.html"
+      "loader.html",
+      "LICENSE"
     ],
     "icon": "build/icon.png",
     "linux": {
