@@ -186,7 +186,7 @@ function waitForReady() {
         return reject(new Error("Timed out waiting for SuperPlane to start"));
       }
 
-      const req = http.get(`${ALLOWED_ORIGIN}/`, (res) => {
+      const req = http.get(`${ALLOWED_ORIGIN}/health`, (res) => {
         if (res.statusCode >= 200 && res.statusCode < 400) {
           sendLog(`Got HTTP ${res.statusCode} — app is ready.`);
           resolve();
