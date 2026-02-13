@@ -5,13 +5,13 @@
 
 Desktop Electron wrapper that runs [SuperPlane](https://superplane.com/) locally via Docker.
 
-**[Download for your OS 🚀](https://github.com/kkomelin/superplane-desktop/releases)**  
-_Make sure you have [Docker](https://www.docker.com/) installed._
+**[🚀 Download for your OS](https://github.com/kkomelin/superplane-desktop/releases)**
+_(make sure you have [Docker](https://www.docker.com/) installed)_
 
 
----
 
-## Development documentation
+
+## Development
 
 ### How it works
 
