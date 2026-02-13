@@ -1,4 +1,4 @@
-# SuperPlane Desktop
+# SuperPlane Desktop (unofficial)
 
 [![Release](https://img.shields.io/github/v/release/kkomelin/superplane-desktop)](https://github.com/kkomelin/superplane-desktop/releases)
 [![Build](https://github.com/kkomelin/superplane-desktop/actions/workflows/build.yml/badge.svg)](https://github.com/kkomelin/superplane-desktop/actions/workflows/build.yml)
