@@ -21,7 +21,7 @@ Closing the window stops the container.
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v24+)
+- [Node.js](https://nodejs.org/) (v20+)
 - [pnpm](https://pnpm.io/)
 - [Docker](https://www.docker.com/)
 
