@@ -5,25 +5,33 @@
 
 Desktop Electron wrapper that runs [SuperPlane](https://superplane.com/) locally via Docker.
 
-## How it works
+**[Download for your OS 🚀](https://github.com/kkomelin/superplane-desktop/releases)**  
+_Make sure you have [Docker](https://www.docker.com/) installed._
+
+
+---
+
+## Development documentation
+
+### How it works
 
 A loader screen shows live Docker output while the image is pulled and the container starts. 
 Once the app responds on `http://127.0.0.1:3000/health`, the loader transitions to the main app window. 
 Closing the window stops the container.
 
-## Prerequisites
+### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18+)
+- [Node.js](https://nodejs.org/) (v24+)
 - [pnpm](https://pnpm.io/)
 - [Docker](https://www.docker.com/) (running)
 
-## Setup
+### Setup
 
 ```bash
 pnpm install
 ```
 
-## Run
+### Run
 
 ```bash
 pnpm start
@@ -37,7 +45,7 @@ The app will:
 
 Data is persisted in the `spdata` Docker volume.
 
-## Build
+### Build
 
 ```bash
 pnpm build          # current platform
@@ -48,7 +56,7 @@ pnpm build:win      # nsis installer
 
 Output goes to the `dist/` folder.
 
-## Release
+### Release
 
 Push a version tag to build all platforms and create a GitHub Release:
 
