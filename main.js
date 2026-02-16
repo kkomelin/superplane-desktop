@@ -65,18 +65,6 @@ function dockerAvailable() {
   }
 }
 
-function imageExistsLocally() {
-  try {
-    execSync(`docker image inspect ${IMAGE}`, {
-      stdio: "ignore",
-      timeout: 10_000,
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function removeOrphanContainer() {
   try {
     execSync(`docker rm -f ${CONTAINER_NAME}`, {
@@ -104,14 +92,6 @@ function pullImage() {
     });
 
     proc.on("error", reject);
-  });
-}
-
-function pullImageInBackground() {
-  sendLog("Checking for image updates in the background...");
-  const proc = spawn("docker", ["pull", IMAGE], { stdio: "ignore" });
-  proc.on("close", (code) => {
-    if (code === 0) sendLog("Image updated - changes apply on next launch.");
   });
 }
 
@@ -274,12 +254,9 @@ async function startSuperPlane() {
 
     removeOrphanContainer();
 
-    if (imageExistsLocally()) {
-      sendLog("Image found locally - starting immediately.");
-      pullImageInBackground();
-    } else {
-      await pullImage();
-    }
+    // Check for updates before starting
+    sendLog("Checking for image updates...");
+    await pullImage();
 
     await runContainer();
     await waitForReady();

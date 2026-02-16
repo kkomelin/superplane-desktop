@@ -4,10 +4,11 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
-    "build:linux": "electron-builder --linux",
-    "build:mac": "electron-builder --mac",
-    "build:win": "electron-builder --win"
+    "clean": "rimraf dist",
+    "build": "pnpm clean && electron-builder",
+    "build:linux": "pnpm clean && electron-builder --linux",
+    "build:mac": "pnpm clean && electron-builder --mac",
+    "build:win": "pnpm clean && electron-builder --win"
   },
   "homepage": "https://github.com/kkomelin/superplane-desktop",
   "bugs": {
@@ -28,7 +29,7 @@
   },
   "build": {
     "appId": "com.superplane.desktop",
-    "productName": "SuperPlane",
+    "productName": "SuperPlane ",
     "copyright": "Licensed under Apache-2.0.",
     "files": [
       "main.js",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "electron": "^40.2.1",
-    "electron-builder": "^26.7.0"
+    "electron-builder": "^26.7.0",
+    "rimraf": "^6.0.1"
   }
 }
