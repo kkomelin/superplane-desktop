@@ -233,9 +233,9 @@ function stopContainer() {
   if (containerProcess) {
     containerProcess = null;
     try {
-      execSync(`docker stop ${CONTAINER_NAME}`, {
+      execSync(`docker stop --time 8 ${CONTAINER_NAME}`, {
         stdio: "ignore",
-        timeout: 10_000,
+        timeout: 12_000,
       });
     } catch {
       // container may already be gone
